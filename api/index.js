@@ -5,18 +5,17 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User");
 const cookieParser = require("cookie-parser");
+const dotenv = require('dotenv').config()
 const app = express();
 
 const salt = bcrypt.genSaltSync(10);
-const secret = "fghjklkgshhshshshsh";
+const secret = process.env.SECRET;
 
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(express.json());
 app.use(cookieParser());
 
-mongoose.connect(
-  "mongodb+srv://collinsfrontend:collinsfrontend@cluster0.m7rzh9o.mongodb.net/mernblog"
-);
+mongoose.connect(process.env.MONGODB_URI);
 
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
