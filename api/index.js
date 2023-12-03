@@ -5,7 +5,13 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User");
 const cookieParser = require("cookie-parser");
-const dotenv = require('dotenv').config()
+const dotenv = require("dotenv").config();
+const fs = require("fs");
+const multer = require("multer");
+const uploadMiddleWare = multer({ dest: "uploads/" });
+
+const Post = require("./models/Post");
+
 const app = express();
 
 const salt = bcrypt.genSaltSync(10);
@@ -63,6 +69,26 @@ app.get("/profile", (req, res) => {
 
 app.post("/logout", (req, res) => {
   res.cookie("token", "").json("ok");
+});
+
+app.post("/post", uploadMiddleWare.single("file"), async (req, res) => {
+  const { originalname, path } = req.file;
+  const parts = originalname.split(".");
+  const ext = parts[parts.length - 1];
+
+  const newPath = path + "." + ext;
+  fs.renameSync(path, newPath);
+
+  const { title, summary, content } = req.body;
+
+  const postDoc = await Post.create({
+    title,
+    summary,
+    content,
+    cover: newPath,
+  });
+
+  res.json(postDoc);
 });
 
 app.listen(4000);
