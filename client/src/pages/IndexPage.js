@@ -11,7 +11,7 @@ const IndexPage = () => {
       });
     });
   }, []);
-  return <>{posts.length > 0 && posts.map((post) => <Post {...post}/>)}</>;
+  return <>{posts.length > 0 && posts.map((post) => <Post key={post.title} {...post}/>)}</>;
 };
 
 export default IndexPage;
